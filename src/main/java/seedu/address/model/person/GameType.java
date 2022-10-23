@@ -39,7 +39,7 @@ public class GameType {
     }
 
     public String toString() {
-        return preferredGameType;
+        return this.preferredGameType;
     }
 
     public String getGameTypeName() {
