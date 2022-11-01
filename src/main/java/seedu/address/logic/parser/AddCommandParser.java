@@ -1,5 +1,6 @@
 package seedu.address.logic.parser;
 
+import static seedu.address.commons.core.Messages.MESSAGE_DUPLICATED_COMMAND;
 import static seedu.address.commons.core.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_ADDRESS;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_COUNTRY;
@@ -53,6 +54,9 @@ public class AddCommandParser implements Parser<AddCommand> {
                 || !argMultimap.getPreamble().isEmpty()) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
         }
+        if (arePrefixesDuplicated(argMultimap, PREFIX_NAME, PREFIX_MINECRAFT_NAME)) {
+            throw new ParseException(String.format(MESSAGE_DUPLICATED_COMMAND));
+        }
 
         Name name = (Name) parseMandatoryArgument(PREFIX_NAME, argMultimap, ParserUtil::parseName);
         MinecraftName mcName = (MinecraftName) parseMandatoryArgument(PREFIX_MINECRAFT_NAME, argMultimap,
@@ -93,6 +97,15 @@ public class AddCommandParser implements Parser<AddCommand> {
      */
     private static boolean arePrefixesPresent(ArgumentMultimap argumentMultimap, Prefix... prefixes) {
         return Stream.of(prefixes).allMatch(prefix -> argumentMultimap.getValue(prefix).isPresent());
+    }
+
+    private static boolean arePrefixesDuplicated(ArgumentMultimap argumentMultimap, Prefix... prefixes) {
+        for (Prefix prefix : prefixes) {
+            if (argumentMultimap.getAllValues(prefix).size() > 1) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
